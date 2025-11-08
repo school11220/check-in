@@ -1,9 +1,9 @@
 'use client';
 
-import { Suspense, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-function MockPaymentContent() {
+export default function MockPaymentContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const ticketId = searchParams.get('ticketId');
@@ -33,6 +33,9 @@ function MockPaymentContent() {
         if (response.ok) {
           // Redirect to ticket page
           router.push(`/ticket/${ticketId}?success=true`);
+        } else {
+          alert('Payment processing failed');
+          setProcessing(false);
         }
       } catch (error) {
         alert('Payment processing failed');
@@ -97,20 +100,5 @@ function MockPaymentContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function MockPaymentPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading payment page...</p>
-        </div>
-      </div>
-    }>
-      <MockPaymentContent />
-    </Suspense>
   );
 }

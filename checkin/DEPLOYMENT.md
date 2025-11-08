@@ -1,117 +1,232 @@
-# 🚀 Deployment Guide
+# Vercel Deployment Guide# 🚀 Deployment Guide
 
-## Prerequisites
 
-Before deploying, ensure you have:
+
+## ✅ Files Ready for Deployment## Prerequisites
+
+
+
+All configuration files have been created and updated:Before deploying, ensure you have:
+
 - ✅ Stripe account with API keys
-- ✅ PostgreSQL database (production)
-- ✅ Domain name (optional but recommended)
-- ✅ Git repository
 
-## Option 1: Vercel Deployment (Recommended)
+- ✅ `prisma/schema.prisma` - Updated for PostgreSQL- ✅ PostgreSQL database (production)
 
-### Step 1: Prepare Your Database
+- ✅ `package.json` - Build scripts configured- ✅ Domain name (optional but recommended)
 
-Choose a managed PostgreSQL provider:
+- ✅ `.env.local` - Local development (SQLite)- ✅ Git repository
 
-#### Neon (Recommended - Free tier)
+- ✅ `.env.production` - Production template
+
+- ✅ `vercel.json` - Vercel configuration## Option 1: Vercel Deployment (Recommended)
+
+- ✅ `.gitignore` - Updated to exclude sensitive files
+
+- ✅ `prisma.config.ts` - Supports both environments### Step 1: Prepare Your Database
+
+
+
+---Choose a managed PostgreSQL provider:
+
+
+
+## 🚀 Step-by-Step Deployment Instructions#### Neon (Recommended - Free tier)
+
 1. Sign up at [neon.tech](https://neon.tech)
-2. Create a new project
-3. Copy connection string
-4. Format: `postgresql://user:pass@host/database?sslmode=require`
 
-#### Railway
-1. Sign up at [railway.app](https://railway.app)
-2. Create PostgreSQL service
+### Step 1: Commit and Push to GitHub2. Create a new project
+
 3. Copy connection string
 
-#### Supabase
-1. Sign up at [supabase.com](https://supabase.com)
-2. Create project
-3. Get database URL from Settings → Database
+```bash4. Format: `postgresql://user:pass@host/database?sslmode=require`
+
+git add .
+
+git commit -m "Configure for Vercel deployment"#### Railway
+
+git push origin main1. Sign up at [railway.app](https://railway.app)
+
+```2. Create PostgreSQL service
+
+3. Copy connection string
 
 ### Step 2: Deploy to Vercel
 
+#### Supabase
+
+1. Go to https://vercel.com1. Sign up at [supabase.com](https://supabase.com)
+
+2. Click **"Add New..."** → **"Project"**2. Create project
+
+3. Import your GitHub repository3. Get database URL from Settings → Database
+
+4. Click **"Deploy"** (it will fail initially - that's expected!)
+
+### Step 2: Deploy to Vercel
+
+### Step 3: Add PostgreSQL Database
+
 ```bash
-# Install Vercel CLI
-npm i -g vercel
 
-# Login
-vercel login
+1. Go to your Vercel project dashboard# Install Vercel CLI
 
-# Deploy
+2. Click **"Storage"** tabnpm i -g vercel
+
+3. Click **"Create Database"**
+
+4. Select **"Postgres"**# Login
+
+5. Name: `checkin-db`vercel login
+
+6. Region: `Singapore (sin1)`
+
+7. Click **"Create"**# Deploy
+
 vercel
-```
 
-Or use [Vercel Dashboard](https://vercel.com):
+✅ Vercel automatically adds:```
+
+- `POSTGRES_PRISMA_URL`
+
+- `POSTGRES_URL_NON_POOLING`Or use [Vercel Dashboard](https://vercel.com):
+
 1. Import Git repository
-2. Configure project
+
+### Step 4: Add Environment Variables2. Configure project
+
 3. Deploy
+
+Go to **Settings** → **Environment Variables** and add these:
 
 ### Step 3: Configure Environment Variables
 
+**Required Variables:**
+
 In Vercel Dashboard → Settings → Environment Variables, add:
 
-```env
-DATABASE_URL=postgresql://user:pass@host/database?sslmode=require
-STRIPE_SECRET_KEY=sk_live_your_key_here
-STRIPE_PUBLISHABLE_KEY=pk_live_your_key_here
-STRIPE_WEBHOOK_SECRET=whsec_production_secret
-TICKET_SECRET_KEY=your-production-secret-32-chars-min
-NEXT_PUBLIC_APP_URL=https://yourdomain.com
-```
+| Variable Name | Value | Environments |
 
-**Important:** Use LIVE Stripe keys for production!
+|--------------|-------|--------------|```env
 
-### Step 4: Run Database Migration
+| `TICKET_SECRET_KEY` | `099eb0cd-02cf-4e2a-8aca-3e6c6aff0399` | All |DATABASE_URL=postgresql://user:pass@host/database?sslmode=require
 
-```bash
-# After deployment, run migration
-npx prisma db push
-```
+| `PHONEPE_MERCHANT_ID` | `MERCHANTUAT` | All |STRIPE_SECRET_KEY=sk_live_your_key_here
+
+| `PHONEPE_SALT_KEY` | `099eb0cd-02cf-4e2a-8aca-3e6c6aff0399` | All |STRIPE_PUBLISHABLE_KEY=pk_live_your_key_here
+
+| `PHONEPE_SALT_INDEX` | `1` | All |STRIPE_WEBHOOK_SECRET=whsec_production_secret
+
+| `PHONEPE_ENVIRONMENT` | `sandbox` | All |TICKET_SECRET_KEY=your-production-secret-32-chars-min
+
+| `NEXT_PUBLIC_PHONEPE_MERCHANT_ID` | `MERCHANTUAT` | All |NEXT_PUBLIC_APP_URL=https://yourdomain.com
+
+| `NEXT_PUBLIC_APP_URL` | `https://your-app.vercel.app` | All |```
+
+
+
+**Note:** Update `NEXT_PUBLIC_APP_URL` with your actual Vercel URL after first deployment.**Important:** Use LIVE Stripe keys for production!
+
+
+
+### Step 5: Update NEXT_PUBLIC_APP_URL### Step 4: Run Database Migration
+
+
+
+1. After deployment, copy your Vercel URL (e.g., `https://checkin-abc123.vercel.app`)```bash
+
+2. Go to **Settings** → **Environment Variables**# After deployment, run migration
+
+3. Edit `NEXT_PUBLIC_APP_URL`npx prisma db push
+
+4. Replace with your actual Vercel URL```
+
+5. Save
 
 Or use Vercel's CLI:
-```bash
+
+### Step 6: Redeploy```bash
+
 vercel env pull
-npx prisma db push
-```
 
-### Step 5: Configure Stripe Webhook
+1. Go to **Deployments** tabnpx prisma db push
 
-1. Go to [Stripe Dashboard](https://dashboard.stripe.com/webhooks)
+2. Click **"..."** on latest deployment```
+
+3. Click **"Redeploy"**
+
+4. Wait 2-3 minutes ✅### Step 5: Configure Stripe Webhook
+
+
+
+---1. Go to [Stripe Dashboard](https://dashboard.stripe.com/webhooks)
+
 2. Click "Add endpoint"
-3. Enter URL: `https://yourdomain.vercel.app/api/webhooks/stripe`
+
+## 🧪 Testing Your Deployment3. Enter URL: `https://yourdomain.vercel.app/api/webhooks/stripe`
+
 4. Select event: `checkout.session.completed`
-5. Add endpoint
+
+Visit your Vercel URL and test:5. Add endpoint
+
 6. Copy signing secret
-7. Update `STRIPE_WEBHOOK_SECRET` in Vercel environment variables
-8. Redeploy to apply changes
 
-### Step 6: Test Production
+1. ✅ Homepage loads7. Update `STRIPE_WEBHOOK_SECRET` in Vercel environment variables
 
-1. Visit your deployed URL
+2. ✅ Register for ticket8. Redeploy to apply changes
+
+3. ✅ Mock payment works
+
+4. ✅ Ticket with QR code displays### Step 6: Test Production
+
+5. ✅ Check-in portal works
+
+6. ✅ Camera scanner works1. Visit your deployed URL
+
 2. Create a test ticket (use test mode first)
-3. Complete payment
+
+---3. Complete payment
+
 4. Verify webhook is received
-5. Check QR code generation
+
+## 📊 Check Database Records5. Check QR code generation
+
 6. Test check-in flow
+
+In Vercel Dashboard → Storage → checkin-db → Query:
 
 ### Step 7: Switch to Live Mode
 
-1. Update Stripe keys to live mode in Vercel
-2. Update webhook endpoint for live mode
+```sql
+
+SELECT * FROM "Ticket" ORDER BY "createdAt" DESC LIMIT 10;1. Update Stripe keys to live mode in Vercel
+
+```2. Update webhook endpoint for live mode
+
 3. Test with real card (small amount)
-4. Monitor Stripe Dashboard
 
-## Option 2: Railway Deployment
+---4. Monitor Stripe Dashboard
 
-### Step 1: Create Railway Project
-```bash
-# Install Railway CLI
-npm i -g railway
 
-# Login
-railway login
+
+## ✅ Deployment Checklist## Option 2: Railway Deployment
+
+
+
+- [ ] Committed all changes to GitHub### Step 1: Create Railway Project
+
+- [ ] Created Vercel project```bash
+
+- [ ] Added PostgreSQL database in Vercel# Install Railway CLI
+
+- [ ] Added all 7 environment variablesnpm i -g railway
+
+- [ ] Updated `NEXT_PUBLIC_APP_URL` with actual Vercel URL
+
+- [ ] Redeployed after setting env vars# Login
+
+- [ ] Tested complete flowrailway login
+
+- [ ] Verified database has records
 
 # Initialize
 railway init

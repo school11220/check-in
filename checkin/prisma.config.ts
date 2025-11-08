@@ -8,6 +8,7 @@ export default defineConfig({
   },
   engine: "classic",
   datasource: {
-    url: env("DATABASE_URL"),
+    // Use POSTGRES_PRISMA_URL in production (Vercel), DATABASE_URL locally
+    url: env("POSTGRES_PRISMA_URL") || env("DATABASE_URL"),
   },
 });
